@@ -1,3 +1,3 @@
 """
-    ECG window class is defined here  
+    ECG window class is defined here
 """
