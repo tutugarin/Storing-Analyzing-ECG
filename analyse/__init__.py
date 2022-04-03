@@ -4,13 +4,13 @@
 
 import yaml
 
-from utils.download_db import get_db # pylint: disable=import-error
+from utils.download_db import get_db  # pylint: disable=import-error
 
 PATH_TO_DATA = "data/"
 
 def main():
     """
-        Parametrs of run: config/params.yml
+        Parameters of run: config/params.yml
     """
     with open(r'config/params.yml', encoding='UTF-8') as file:
         params_list = yaml.load(file, Loader=yaml.FullLoader)
