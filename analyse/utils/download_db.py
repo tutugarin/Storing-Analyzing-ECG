@@ -23,14 +23,14 @@ def get_db(url, filename, destination):
         return f"{destination}{filename}"
     try:
         print(f"Downloading {filename}...", file=sys.stderr)
-        destination = f'{destination}zip_{filename}'
-        urllib.request.urlretrieve(url, destination)
+        zip_dest = f'{destination}zip_{filename}'
+        urllib.request.urlretrieve(url, zip_dest)
         print("Download finished.", file=sys.stderr)
         print("Unzipping database...", file=sys.stderr)
-        with zipfile.ZipFile(destination, 'r') as zip_ref:
+        with zipfile.ZipFile(zip_dest, 'r') as zip_ref:
             zip_ref.extractall(destination)
             zip_ref.close()
-            os.remove(destination)
+            os.remove(zip_dest)
             new_files = [file for file in os.listdir(destination) if file not in files]
             os.rename(f"{destination}{new_files[0]}", f"{destination}{filename}")
         print("Unzipping finished.", file=sys.stderr)
