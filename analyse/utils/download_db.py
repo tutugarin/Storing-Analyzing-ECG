@@ -14,11 +14,12 @@ import wfdb
 def get_db(url, filename, path2data='../data/'):
     """
         Download to 'path2data' db from 'url' if no file with 'filename' existed
+        Returns path to db
     """
     files = os.listdir(path2data)
     if filename in files:
         print(f"File with filename '{filename}' is already existed", file=sys.stderr)
-        return
+        return f"{path2data}{filename}"
     try:
         print(f"Downloading {filename}...", file=sys.stderr)
         destination = f'{path2data}zip_{filename}'
@@ -36,11 +37,4 @@ def get_db(url, filename, path2data='../data/'):
         ssl._create_default_https_context = ssl._create_unverified_context # pylint: disable=protected-access
         get_db(url, filename)
 
-
-URL = "https://physionet.org/static/published-projects/afdb/mit-bih-atrial-fibrillation-database-1.0.0.zip" # pylint: disable=line-too-long
-FILENAME = "mit-bih"
-
-get_db(url=URL, filename=FILENAME)
-
-record = wfdb.rdrecord(f'../data/{FILENAME}/04015', sampto=3000)
-annotation = wfdb.rdann(f'../data/{FILENAME}/04015', 'atr', sampto=3000)
+    return f"{path2data}{filename}"
