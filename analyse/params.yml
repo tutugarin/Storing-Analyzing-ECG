@@ -1,0 +1,5 @@
+urls: 
+  - "https://physionet.org/static/published-projects/afdb/mit-bih-atrial-fibrillation-database-1.0.0.zip"
+
+db_names:
+  - "mit-bih"

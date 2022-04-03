@@ -1,2 +1,3 @@
 .idea/
 analyse/data/mit-bih/*
+__pycache__
