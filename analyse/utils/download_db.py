@@ -12,31 +12,31 @@ import sys
 import zipfile
 # import wfdb
 
-def get_db(url, filename, path2data):
+def get_db(url, filename, destination):
     """
-        Download to 'path2data' db from 'url' if no file with 'filename' existed
+        If no file with 'filename' existed, download to 'destination' db from 'url'
         Returns path to db
     """
-    files = os.listdir(path2data)
+    files = os.listdir(destination)
     if filename in files:
         print(f"File with filename '{filename}' is already existed", file=sys.stderr)
-        return f"{path2data}{filename}"
+        return f"{destination}{filename}"
     try:
         print(f"Downloading {filename}...", file=sys.stderr)
-        destination = f'{path2data}zip_{filename}'
+        destination = f'{destination}zip_{filename}'
         urllib.request.urlretrieve(url, destination)
         print("Download finished.", file=sys.stderr)
         print("Unzipping database...", file=sys.stderr)
         with zipfile.ZipFile(destination, 'r') as zip_ref:
-            zip_ref.extractall(path2data)
+            zip_ref.extractall(destination)
             zip_ref.close()
             os.remove(destination)
-            new_files = [file for file in os.listdir(path2data) if file not in files]
-            os.rename(f"{path2data}{new_files[0]}", f"{path2data}{filename}")
+            new_files = [file for file in os.listdir(destination) if file not in files]
+            os.rename(f"{destination}{new_files[0]}", f"{destination}{filename}")
         print("Unzipping finished.", file=sys.stderr)
     except urllib.error.URLError:
         print("Stop! urllib.error.URLError occured\nTrying again...", file=sys.stderr)
         ssl._create_default_https_context = ssl._create_unverified_context # pylint: disable=protected-access
-        get_db(url, filename, path2data)
+        get_db(url, filename, destination)
 
-    return f"{path2data}{filename}"
+    return f"{destination}{filename}"
