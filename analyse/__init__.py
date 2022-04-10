@@ -17,7 +17,11 @@ def main():
 
     databases = []
     for database in params_list['databases']:
-        databases.append(get_db(url=database['url'], filename=database['name'], destination=PATH_TO_DATA))
+        databases.append(get_db(
+            url=database['url'],
+            filename=database['name'],
+            destination=PATH_TO_DATA
+        ))
 
 
 if __name__ == "__main__":
