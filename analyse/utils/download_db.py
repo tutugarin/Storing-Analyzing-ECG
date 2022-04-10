@@ -8,9 +8,7 @@
 import urllib.request
 import ssl
 import os
-import sys
 import zipfile
-# import wfdb
 
 def get_db(url, filename, destination):
     """
@@ -19,23 +17,17 @@ def get_db(url, filename, destination):
     """
     files = os.listdir(destination)
     if filename in files:
-        print(f"File with filename '{filename}' is already existed", file=sys.stderr)
         return f"{destination}{filename}"
     try:
-        print(f"Downloading {filename}...", file=sys.stderr)
         zip_dest = f'{destination}zip_{filename}'
         urllib.request.urlretrieve(url, zip_dest)
-        print("Download finished.", file=sys.stderr)
-        print("Unzipping database...", file=sys.stderr)
         with zipfile.ZipFile(zip_dest, 'r') as zip_ref:
             zip_ref.extractall(destination)
             zip_ref.close()
             os.remove(zip_dest)
             new_files = [file for file in os.listdir(destination) if file not in files]
             os.rename(f"{destination}{new_files[0]}", f"{destination}{filename}")
-        print("Unzipping finished.", file=sys.stderr)
     except urllib.error.URLError:
-        print("Stop! urllib.error.URLError occured\nTrying again...", file=sys.stderr)
         ssl._create_default_https_context = ssl._create_unverified_context # pylint: disable=protected-access
         get_db(url, filename, destination)
 
