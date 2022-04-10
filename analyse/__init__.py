@@ -2,7 +2,7 @@
     Start this file to begin
 """
 
-import yaml
+import json
 
 from utils.download_db import get_db # pylint: disable=import-error
 
@@ -12,14 +12,12 @@ def main():
     """
         Parametrs of run: config/params.yml
     """
-    with open(r'config/params.yml', encoding='UTF-8') as file:
-        params_list = yaml.load(file, Loader=yaml.FullLoader)
-    urls = params_list["urls"]
-    db_names = params_list["db_names"]
+    with open(r'config/params.json', encoding='UTF-8') as file:
+        params_list = json.load(file)
 
     databases = []
-    for url, db_name in zip(urls, db_names):
-        databases.append(get_db(url=url, filename=db_name, destination=PATH_TO_DATA))
+    for database in params_list['databases']:
+        databases.append(get_db(url=database['url'], filename=database['name'], destination=PATH_TO_DATA))
 
 
 if __name__ == "__main__":
