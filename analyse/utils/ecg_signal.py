@@ -3,11 +3,17 @@
 """
 
 class Sygnal:
-    def __init__(self, data):
+    def __init__(self, name, data, info):
         """
             Initialize object with sygnal from database
         """
+        self.name = name
         self.data = data
+
+        self.sig_len = info['sig_len']
+        self.sample_frequency = info['fs']
+        self.sig_name = info['sig_name']
+
         self.windows = None
 
     def split(self, count):
