@@ -1,11 +1,11 @@
 """
-    ECG sygnal class is defined here
+    ECG signal class is defined here
 """
 
-class Sygnal:
+class Signal:
     def __init__(self, name, data, info):
         """
-            Initialize object with sygnal from database
+            Initialize object with signal from database
         """
         self.name = name
         self.data = data
@@ -18,13 +18,13 @@ class Sygnal:
 
     def split(self, count):
         """
-            Sptilt sygnal to windows with 'count' RR intervals
+            Split signal to windows with 'count' RR intervals
         """
-        count=count
+        count = count
         pass
 
     def get_r_peaks(self):
         """
-            Returns indecis of R peaks
+            Returns indexes of R peaks
         """
         pass
