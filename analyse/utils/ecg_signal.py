@@ -9,17 +9,16 @@ class Signal:
     """
         Class for 1-D signal pre-processing
     """
-    def __init__(self, name, data, info):
+    def __init__(self, sig_name, data, info):
         """
             Initialize object with signal from database
             data: 1-D array
         """
-        self.name = name
+        self.name = sig_name
         self.data = data
 
         self.sig_len = info['sig_len']
         self.sample_frequency = info['fs']
-        self.sig_name = info['sig_name']
 
         self.windows = []
 
@@ -56,3 +55,10 @@ class Signal:
             self.data[:, 0], peak_inds=x_qrs.qrs_inds,
             search_radius=radius, smooth_window_size=window_size)
         return corrected_peak_indexes
+        pass
+
+def create_signal(name, data, info):
+    """
+        create Signal object
+    """
+    return Signal(name, data, info)

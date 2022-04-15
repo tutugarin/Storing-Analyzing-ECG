@@ -5,5 +5,7 @@
             "url" : "https://physionet.org/static/published-projects/afdb/mit-bih-atrial-fibrillation-database-1.0.0.zip"
         }
     ],
-    "window_size" : 32
+    "signal params" : {
+        "window_size" : 32
+    }
 }
