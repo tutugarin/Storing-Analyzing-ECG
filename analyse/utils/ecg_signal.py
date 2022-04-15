@@ -6,6 +6,9 @@ from wfdb import processing
 
 
 class Signal:
+    """
+        Class for 1-D signal pre-processing
+    """
     def __init__(self, name, data, info):
         """
             Initialize object with signal from database
@@ -39,7 +42,6 @@ class Signal:
             rr_end = min(peak_indexes[i] + mean_peak_diff, len(self.data))
             self.windows.append(self.data[rr_start:rr_end])
             rr_start = rr_end
-        pass
 
     def get_r_peaks(self):
         """
@@ -47,10 +49,10 @@ class Signal:
         """
         x_qrs = processing.XQRS(sig=self.data[:, 0], fs=self.sample_frequency)
         x_qrs.detect()
-        MAX_BPM = 230
-        WINDOW_SIZE = 150
-        radius = int(self.sample_frequency * 60 / MAX_BPM)
-        corrected_peak_indexes = processing.correct_peaks(self.data[:, 0], peak_inds=x_qrs.qrs_inds,
-                                                          search_radius=radius, smooth_window_size=WINDOW_SIZE)
+        max_bpm = 230
+        window_size = 150
+        radius = int(self.sample_frequency * 60 / max_bpm)
+        corrected_peak_indexes = processing.correct_peaks(
+            self.data[:, 0], peak_inds=x_qrs.qrs_inds,
+            search_radius=radius, smooth_window_size=window_size)
         return corrected_peak_indexes
-        pass
