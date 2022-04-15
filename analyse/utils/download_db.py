@@ -47,20 +47,21 @@ def get_signals(path):
     """
     signals = []
     all_records = f'{path}/RECORDS'
-    for rec in open(all_records, "r"):
-        rec = rec.replace('\n', '')
-        try:
-            data, info = wfdb.rdsamp(f"{path}/{rec}")
-            n_sig = info['n_sig']
-            if n_sig > 1:
-                for sig in range(n_sig):
-                    sig_name = f"{rec}/{info['sig_name'][sig]}"
-                    signals.append(create_signal(name=sig_name, data=data[:, sig], info=info))
-            else:
-                sig_name = f"{rec}/{info['sig_name']}"
-                signals.append(create_signal(name=sig_name, data=data, info=info))
+    with open(all_records, encoding='UTF-8') as file:
+        for rec in file:
+            rec = rec.replace('\n', '')
+            try:
+                data, info = wfdb.rdsamp(f"{path}/{rec}")
+                n_sig = info['n_sig']
+                if n_sig > 1:
+                    for sig in range(n_sig):
+                        sig_name = f"{rec}/{info['sig_name'][sig]}"
+                        signals.append(create_signal(name=sig_name, data=data[:, sig], info=info))
+                else:
+                    sig_name = f"{rec}/{info['sig_name']}"
+                    signals.append(create_signal(name=sig_name, data=data, info=info))
 
-        except:
-            print(f"Record {rec} can't be read", file=sys.stderr)
-    
+            except ValueError:
+                print(f"Record {rec} can't be read", file=sys.stderr)
+
     return signals
