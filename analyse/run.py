@@ -1,10 +1,11 @@
 """
+    You should be at the same dir, where run.py is
     Start this file to begin
 """
 
-import json
-
 from utils import download_db # pylint: disable=import-error
+from utils import global_config # pylint: disable=import-error
+from utils.global_config import GlobalConfig as CONFIG # pylint: disable=import-error
 
 PATH_TO_DATA = "data/"
 
@@ -13,11 +14,10 @@ def main():
     """
         Parametrs of run: config/params.yml
     """
-    with open(r'config/params.json', encoding='UTF-8') as file:
-        params_list = json.load(file)
+    global_config.init_config(r'config/params.json')
 
     signals = []
-    for database in params_list['databases']:
+    for database in CONFIG.config('databases'):
         path = download_db.get_db(
             url=database['url'],
             filename=database['name'],
