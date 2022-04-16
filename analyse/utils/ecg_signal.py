@@ -3,7 +3,7 @@
 """
 
 from wfdb import processing
-
+from ecg_window import Window
 
 class Signal:
     """
@@ -39,7 +39,7 @@ class Signal:
         rr_start = 0
         for i in range(count, len(peak_indexes), count):
             rr_end = min(peak_indexes[i] + mean_peak_diff, len(self.data))
-            self.windows.append(self.data[rr_start:rr_end])
+            self.windows.append(Window(self.data[rr_start:rr_end]))
             rr_start = rr_end
 
     def get_r_peaks(self):
