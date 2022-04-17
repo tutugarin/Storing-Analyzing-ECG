@@ -14,7 +14,6 @@ def main():
     """
         Parametrs of run: config/params.yml
     """
-    global_config.init_config(r'config/params.json')
 
     signals = []
     for database in CONFIG.config('databases'):
@@ -29,4 +28,5 @@ def main():
 
 
 if __name__ == "__main__":
+    global_config.init_config(r'config/params.json')
     main()

@@ -6,7 +6,7 @@
         }
     ],
     "signal params" : {
-        "window_size" : 32
+        "window_size" : 16
     },
     "run params" : {
         "treshold" : 0.1

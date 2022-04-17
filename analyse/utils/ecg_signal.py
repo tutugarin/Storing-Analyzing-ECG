@@ -34,7 +34,7 @@ class Signal:
         total_amount = len(peak_indexes) - count
         if total_amount > 0 :
             for start in range(total_amount):
-                name = f"{self.name}/{start}"
+                name = f"{self.name}_{start}"
                 begin = peak_indexes[start]
                 end = peak_indexes[start + count]
                 interval = self.data[begin:end]

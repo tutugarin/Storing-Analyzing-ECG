@@ -8,6 +8,7 @@ import urllib.request
 import ssl
 import sys
 import os
+import pickle
 import zipfile
 import wfdb
 
@@ -31,6 +32,10 @@ def get_db(url, filename, destination):
             os.remove(zip_dest)
             new_files = [file for file in os.listdir(destination) if file not in files]
             os.rename(f"{destination}{new_files[0]}", f"{destination}{filename}")
+
+        bin_dir = f"{destination}{filename}-binary"
+        if bin_dir not in files:
+            os.mkdir(bin_dir)
     except urllib.error.URLError:
         ssl._create_default_https_context = ssl._create_unverified_context # pylint: disable=protected-access
         get_db(url, filename, destination)
@@ -40,12 +45,16 @@ def get_db(url, filename, destination):
 def get_signals(path):
     """
         Input:
-            path - path to database with subdirectory RECORDS
+            path - path to raw database with subdirectory RECORDS
 
         Output:
             list of objects of class Signal
+
+        Consequences:
+            creates {path}-binary dir with pickeled processed signals
     """
     signals = []
+    processed_signals = os.listdir(f"{path}-binary")
     all_records = f'{path}/RECORDS'
     with open(all_records, encoding='UTF-8') as file:
         for rec in file:
@@ -55,11 +64,35 @@ def get_signals(path):
                 n_sig = info['n_sig']
                 if n_sig > 1:
                     for sig in range(n_sig):
-                        sig_name = f"{rec}/{info['sig_name'][sig]}"
-                        signals.append(create_signal(name=sig_name, data=data[:, sig], info=info))
+                        sig_name = f"{rec}_{info['sig_name'][sig]}"
+                        filename = f"{path}-binary/{sig_name}.pickle"
+                        if f"{sig_name}.pickle" in processed_signals:
+                            with open(filename, 'rb') as bin_file:
+                                signals.append(pickle.load(bin_file))
+                                print(f"unpickled {bin_file}")
+                        else:
+                            signals.append(create_signal(sig_name, data[:, sig], info))
+                            with open(filename, 'wb') as bin_file:
+                                pickle.dump(
+                                    signals[-1],
+                                    file=bin_file,
+                                    protocol=pickle.HIGHEST_PROTOCOL
+                                )
                 else:
                     sig_name = f"{rec}/{info['sig_name']}"
-                    signals.append(create_signal(name=sig_name, data=data, info=info))
+                    filename = f"{path}-binary/{sig_name}.pickle"
+                    if f"{sig_name}.pickle" in processed_signals:
+                        with open(filename, 'rb') as bin_file:
+                            signals.append(pickle.load(bin_file))
+                            print(f"unpicked {bin_file}")
+                    else:
+                        signals.append(create_signal(sig_name, data, info))
+                        with open(filename, 'wb') as bin_file:
+                            pickle.dump(
+                                signals[-1],
+                                file=bin_file,
+                                protocol=pickle.HIGHEST_PROTOCOL
+                            )
 
             except ValueError:
                 print(f"Record {rec} can't be read", file=sys.stderr)
