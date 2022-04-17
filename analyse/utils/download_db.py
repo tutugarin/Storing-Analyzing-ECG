@@ -42,19 +42,26 @@ def get_db(url, filename, destination):
 
     return f"{destination}{filename}"
 
-def get_signals(path):
+def get_signals(path, reload=False):
     """
         Input:
             path - path to raw database with subdirectory RECORDS
+            reload - bool var: if True clears {path}-binary dir
 
         Output:
             list of objects of class Signal
 
         Consequences:
-            creates {path}-binary dir with pickeled processed signals
+            fill {path}-binary dir with pickeled processed signals
     """
+    bin_dir = f"{path}-binary"
+    if reload is True:
+        for file in os.listdir(bin_dir):
+            os.remove(os.path.join(bin_dir, file))
+
     signals = []
-    processed_signals = os.listdir(f"{path}-binary")
+    processed_signals = os.listdir(bin_dir)
+
     all_records = f'{path}/RECORDS'
     with open(all_records, encoding='UTF-8') as file:
         for rec in file:
@@ -65,7 +72,7 @@ def get_signals(path):
                 if n_sig > 1:
                     for sig in range(n_sig):
                         sig_name = f"{rec}_{info['sig_name'][sig]}"
-                        filename = f"{path}-binary/{sig_name}.pickle"
+                        filename = f"{bin_dir}/{sig_name}.pickle"
                         if f"{sig_name}.pickle" in processed_signals:
                             with open(filename, 'rb') as bin_file:
                                 signals.append(pickle.load(bin_file))
@@ -79,7 +86,7 @@ def get_signals(path):
                                 )
                 else:
                     sig_name = f"{rec}/{info['sig_name']}"
-                    filename = f"{path}-binary/{sig_name}.pickle"
+                    filename = f"{bin_dir}/{sig_name}.pickle"
                     if f"{sig_name}.pickle" in processed_signals:
                         with open(filename, 'rb') as bin_file:
                             signals.append(pickle.load(bin_file))
