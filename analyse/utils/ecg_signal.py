@@ -35,10 +35,7 @@ class Signal:
         if total_amount > 0 :
             for start in range(total_amount):
                 name = f"{self.name}_{start}"
-                begin = peak_indexes[start]
-                end = peak_indexes[start + count]
-                interval = self.data[begin:end]
-                windows.append(create_window(name, interval, peak_indexes[start:start + count]))
+                windows.append(create_window(name, peak_indexes[start:start + count]))
 
         return windows
 

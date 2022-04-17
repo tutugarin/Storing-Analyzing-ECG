@@ -69,7 +69,6 @@ def get_signals(path):
                         if f"{sig_name}.pickle" in processed_signals:
                             with open(filename, 'rb') as bin_file:
                                 signals.append(pickle.load(bin_file))
-                                print(f"unpickled {bin_file}")
                         else:
                             signals.append(create_signal(sig_name, data[:, sig], info))
                             with open(filename, 'wb') as bin_file:
@@ -84,7 +83,6 @@ def get_signals(path):
                     if f"{sig_name}.pickle" in processed_signals:
                         with open(filename, 'rb') as bin_file:
                             signals.append(pickle.load(bin_file))
-                            print(f"unpicked {bin_file}")
                     else:
                         signals.append(create_signal(sig_name, data, info))
                         with open(filename, 'wb') as bin_file:

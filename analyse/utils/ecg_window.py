@@ -5,7 +5,6 @@
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
 
 from .global_config import GlobalConfig as CONFIG
 
@@ -13,13 +12,12 @@ class Window:
     """
         Class for special interval of a processed signal
     """
-    def __init__(self, name, interval, r_peak_indexes):
+    def __init__(self, name, r_peak_indexes):
         """
             Initialize object with interval (interval_size can differ)
         """
         self.name = name
 
-        self.interval = interval
         self.r_peaks = r_peak_indexes
 
         self.ratios = self.get_ratios()
@@ -66,17 +64,8 @@ class Window:
 
         return alphabet
 
-    def plot(self):
-        """
-            plot window
-        """
-        plt.plot(self.interval)
-        plt.ylabel(self.name)
-        plt.show()
-        print("r_peaks:", self.r_peaks)
-
-def create_window(name, interval, r_peak_indexes):
+def create_window(name, r_peak_indexes):
     """
         create Window object
     """
-    return Window(name, interval, r_peak_indexes)
+    return Window(name, r_peak_indexes)
