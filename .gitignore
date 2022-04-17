@@ -1,3 +1,4 @@
 .idea/
 analyse/data/mit-bih*
 __pycache__
+*.DS_Store
