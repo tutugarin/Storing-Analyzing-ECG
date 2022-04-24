@@ -27,6 +27,10 @@ class Window:
         self.median = np.median(self.ratios)
         self.mean = np.mean(self.ratios)
         self.variance = np.var(self.ratios)
+        self.mean_abs = np.mean(np.abs(self.ratios))
+        self.max = np.max(self.ratios)
+        self.min = np.min(self.ratios)
+        self.sum = np.sum(self.ratios)
 
     def get_ratios(self):
         """
@@ -40,7 +44,7 @@ class Window:
         for i in range(1, len(self.r_peaks) - 1):
             cur_len = self.r_peaks[i + 1] - self.r_peaks[i]
             if prev_len != 0:
-                ratios.append(1 - cur_len / prev_len)
+                ratios.append((cur_len / prev_len) - 1)
             prev_len = cur_len
         return np.array(ratios)
 
