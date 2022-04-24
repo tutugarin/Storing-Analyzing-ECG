@@ -31,8 +31,7 @@ def main():
             destination=PATH_TO_DATA
         )
         new_signals = download_db.get_signals(path, reload)
-        if new_signals:
-            signals.extend(new_signals)
+        signals.extend(new_signals)
 
 
 if __name__ == "__main__":
@@ -44,6 +43,7 @@ if __name__ == "__main__":
         encoding='utf-8', 
         format='%(asctime)s %(levelname)s: %(message)s',
         level=logging.DEBUG, 
-        filemode='w')
+        filemode='w'
+    )
     global_config.init_config(r'config/params.json')
     main()
