@@ -55,12 +55,14 @@ def get_signals(path, reload=False):
             fill {path}-binary dir with pickeled processed signals
     """
     bin_dir = f"{path}-binary"
+    processed_signals = os.listdir(bin_dir)
+
     if reload is True:
-        for file in os.listdir(bin_dir):
+        for file in processed_signals:
             os.remove(os.path.join(bin_dir, file))
+        processed_signals = []
 
     signals = []
-    processed_signals = os.listdir(bin_dir)
 
     all_records = f'{path}/RECORDS'
     with open(all_records, encoding='UTF-8') as file:
