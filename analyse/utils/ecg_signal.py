@@ -2,10 +2,12 @@
     ECG signal class is defined here
 """
 
+import numpy as np
 from wfdb import processing
 
 from .ecg_window import create_window
 from .global_config import GlobalConfig as CONFIG
+
 
 class Signal:
     """
@@ -37,7 +39,7 @@ class Signal:
                 name = f"{self.name}_{start}"
                 windows.append(create_window(name, peak_indexes[start:start + count]))
 
-        return windows
+        return np.array(windows)
 
     def get_r_peaks(self):
         """

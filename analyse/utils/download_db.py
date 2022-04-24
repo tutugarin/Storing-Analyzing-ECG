@@ -8,6 +8,7 @@ import urllib.request
 import ssl
 import sys
 import os
+import numpy as np
 import pickle
 import zipfile
 import wfdb
@@ -104,4 +105,4 @@ def get_signals(path, reload=False):
             except ValueError:
                 print(f"Record {rec} can't be read", file=sys.stderr)
 
-    return signals
+    return np.array(signals)

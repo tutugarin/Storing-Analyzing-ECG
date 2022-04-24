@@ -8,6 +8,7 @@ import numpy as np
 
 from .global_config import GlobalConfig as CONFIG
 
+
 class Window:
     """
         Class for special interval of a processed signal
@@ -41,7 +42,7 @@ class Window:
             if prev_len != 0:
                 ratios.append(1 - cur_len / prev_len)
             prev_len = cur_len
-        return ratios
+        return np.array(ratios)
 
 
     def code_ratios(self):
@@ -62,7 +63,7 @@ class Window:
                 continue
             alphabet.append('A')
 
-        return alphabet
+        return np.array(alphabet)
 
 def create_window(name, r_peak_indexes):
     """
