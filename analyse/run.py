@@ -3,6 +3,8 @@
     Start this file to begin
 """
 
+import logging
+
 from utils import download_db # pylint: disable=import-error
 from utils import global_config # pylint: disable=import-error
 from utils.global_config import GlobalConfig as CONFIG # pylint: disable=import-error
@@ -28,5 +30,9 @@ def main():
 
 
 if __name__ == "__main__":
+    """
+        Setup config and run main
+    """
+    logging.basicConfig(filename='run-logs.log', encoding='utf-8', level=logging.DEBUG, filemode='w')
     global_config.init_config(r'config/params.json')
     main()

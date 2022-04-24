@@ -6,8 +6,8 @@
 
 import urllib.request
 import ssl
-import sys
 import os
+import logging
 import numpy as np
 import pickle
 import zipfile
@@ -25,6 +25,7 @@ def get_db(url, filename, destination):
     if filename in files:
         return f"{destination}{filename}"
     try:
+        logging.info(f"Downloading {filename}")
         zip_dest = f'{destination}zip_{filename}'
         urllib.request.urlretrieve(url, zip_dest)
         with zipfile.ZipFile(zip_dest, 'r') as zip_ref:
@@ -34,6 +35,7 @@ def get_db(url, filename, destination):
             new_files = [file for file in os.listdir(destination) if file not in files]
             os.rename(f"{destination}{new_files[0]}", f"{destination}{filename}")
 
+        logging.info("Download finished!")
         bin_dir = f"{destination}{filename}-binary"
         if bin_dir not in files:
             os.mkdir(bin_dir)
@@ -78,23 +80,29 @@ def get_signals(path, reload=False):
                         filename = f"{bin_dir}/{sig_name}.pickle"
                         if f"{sig_name}.pickle" in processed_signals:
                             with open(filename, 'rb') as bin_file:
+                                logging.info(f"unpickling {filename}")
                                 signals.append(pickle.load(bin_file))
                         else:
+                            logging.info(f"preprocessing {filename}")
                             signals.append(create_signal(sig_name, data[:, sig], info))
+                            logging.info(f"pickling {filename}")
                             with open(filename, 'wb') as bin_file:
                                 pickle.dump(
                                     signals[-1],
                                     file=bin_file,
                                     protocol=pickle.HIGHEST_PROTOCOL
                                 )
-                else:
+                else: # FIXME: REMOVE CODE DUPLICATION
                     sig_name = f"{rec}/{info['sig_name']}"
                     filename = f"{bin_dir}/{sig_name}.pickle"
                     if f"{sig_name}.pickle" in processed_signals:
                         with open(filename, 'rb') as bin_file:
+                            logging.info(f"unpickling {filename}")
                             signals.append(pickle.load(bin_file))
                     else:
+                        logging.info(f"preprocess {filename}")
                         signals.append(create_signal(sig_name, data, info))
+                        logging.info(f"pickling {filename}")
                         with open(filename, 'wb') as bin_file:
                             pickle.dump(
                                 signals[-1],
@@ -103,6 +111,6 @@ def get_signals(path, reload=False):
                             )
 
             except ValueError:
-                print(f"Record {rec} can't be read", file=sys.stderr)
+                logging.warning(f"Record {rec} can't be read")
 
     return np.array(signals)
