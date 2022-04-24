@@ -4,6 +4,7 @@
 """
 
 import logging
+import sys
 
 from utils import download_db # pylint: disable=import-error
 from utils import global_config # pylint: disable=import-error
@@ -15,7 +16,12 @@ PATH_TO_DATA = "data/"
 def main():
     """
         Parametrs of run: config/params.yml
+        Get arg from command line: if 1 is given, data will be reloaded
     """
+
+    reload = False
+    if len(sys.argv) > 1 and sys.argv[1] == '1':
+        reload = True
 
     signals = []
     for database in CONFIG.config('databases'):
@@ -24,7 +30,7 @@ def main():
             filename=database['name'],
             destination=PATH_TO_DATA
         )
-        new_signals = download_db.get_signals(path)
+        new_signals = download_db.get_signals(path, reload)
         if new_signals:
             signals.extend(new_signals)
 
@@ -33,6 +39,11 @@ if __name__ == "__main__":
     """
         Setup config and run main
     """
-    logging.basicConfig(filename='run-logs.log', encoding='utf-8', level=logging.DEBUG, filemode='w')
+    logging.basicConfig(
+        filename='run-logs.log', 
+        encoding='utf-8', 
+        format='%(asctime)s %(levelname)s: %(message)s',
+        level=logging.DEBUG, 
+        filemode='w')
     global_config.init_config(r'config/params.json')
     main()
