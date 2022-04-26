@@ -5,8 +5,8 @@
 import numpy as np
 from wfdb import processing
 
-from .ecg_window import create_window
-from .global_config import GlobalConfig as CONFIG
+from analyse.utils.ecg_window import Window
+from analyse.utils.global_config import GlobalConfig as CONFIG
 
 
 class Signal:
@@ -36,7 +36,7 @@ class Signal:
         if total_amount > 0 :
             for start in range(total_amount):
                 name = f"{self.name}_{start}"
-                windows.append(create_window(name, peak_indexes[start:start + count]))
+                windows.append(Window(name, peak_indexes[start:start + count]))
 
         return np.array(windows)
 
@@ -46,16 +46,9 @@ class Signal:
         """
         x_qrs = processing.XQRS(sig=data, fs=self.sample_frequency)
         x_qrs.detect(verbose=False)
-        max_bpm = 230
-        window_size = 150
+        max_bpm = CONFIG.config('max_bpm')
         radius = int(self.sample_frequency * 60 / max_bpm)
         corrected_peak_indexes = processing.correct_peaks(
             data, peak_inds=x_qrs.qrs_inds,
-            search_radius=radius, smooth_window_size=window_size)
-        return corrected_peak_indexes
-
-def create_signal(name, data, info):
-    """
-        create Signal object
-    """
-    return Signal(name, data, info)
+            search_radius=radius, smooth_window_size=self.window_size)
+        return np.array(corrected_peak_indexes)

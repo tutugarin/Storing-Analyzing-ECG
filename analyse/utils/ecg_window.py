@@ -6,7 +6,7 @@
 
 import numpy as np
 
-from .global_config import GlobalConfig as CONFIG
+from analyse.utils.global_config import GlobalConfig as CONFIG
 
 
 class Window:
@@ -68,9 +68,3 @@ class Window:
             alphabet.append('A')
 
         return np.array(alphabet)
-
-def create_window(name, r_peak_indexes):
-    """
-        create Window object
-    """
-    return Window(name, r_peak_indexes)

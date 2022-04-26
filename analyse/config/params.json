@@ -6,7 +6,8 @@
         }
     ],
     "signal params" : {
-        "window_size" : 16
+        "window_size" : 16,
+        "max_bpm" : 230
     },
     "run params" : {
         "treshold" : 0.1

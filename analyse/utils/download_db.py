@@ -13,7 +13,7 @@ import pickle
 import zipfile
 import wfdb
 
-from .ecg_signal import create_signal
+from analyse.utils.ecg_signal import Signal
 
 
 def get_db(url, filename, destination):
@@ -73,35 +73,25 @@ def get_signals(path, reload=False):
             rec = rec.replace('\n', '')
             try:
                 data, info = wfdb.rdsamp(f"{path}/{rec}")
+                data = np.array(data)
+
                 n_sig = info['n_sig']
-                if n_sig > 1:
-                    for sig in range(n_sig):
-                        sig_name = f"{rec}_{info['sig_name'][sig]}"
-                        filename = f"{bin_dir}/{sig_name}.pickle"
-                        if f"{sig_name}.pickle" in processed_signals:
-                            with open(filename, 'rb') as bin_file:
-                                logging.info(f"unpickling {filename}")
-                                signals.append(pickle.load(bin_file))
-                        else:
-                            logging.info(f"preprocessing {filename}")
-                            signals.append(create_signal(sig_name, data[:, sig], info))
-                            logging.info(f"pickling {filename}")
-                            with open(filename, 'wb') as bin_file:
-                                pickle.dump(
-                                    signals[-1],
-                                    file=bin_file,
-                                    protocol=pickle.HIGHEST_PROTOCOL
-                                )
-                else: # FIXME: REMOVE CODE DUPLICATION
-                    sig_name = f"{rec}/{info['sig_name']}"
+                if n_sig == 1:
+                    data = np.array(data, ndmin=2).T
+                elif n_sig == 0:
+                    logging.warning(f"Record {rec} has no channels")
+                    continue
+
+                for sig in range(n_sig):
+                    sig_name = f"{rec}_{info['sig_name'][sig]}"
                     filename = f"{bin_dir}/{sig_name}.pickle"
                     if f"{sig_name}.pickle" in processed_signals:
                         with open(filename, 'rb') as bin_file:
                             logging.info(f"unpickling {filename}")
                             signals.append(pickle.load(bin_file))
                     else:
-                        logging.info(f"preprocess {filename}")
-                        signals.append(create_signal(sig_name, data, info))
+                        logging.info(f"preprocessing {filename}")
+                        signals.append(Signal(sig_name, data[:, sig], info))
                         logging.info(f"pickling {filename}")
                         with open(filename, 'wb') as bin_file:
                             pickle.dump(

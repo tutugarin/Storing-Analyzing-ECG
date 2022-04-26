@@ -41,6 +41,7 @@ def init_config(path_to_config):
 
     sig_params = params_list["signal params"]
     GlobalConfig.set("window_size", sig_params["window_size"])
+    GlobalConfig.set("max_bpm", sig_params["max_bpm"])
 
     run_params = params_list["run params"]
     GlobalConfig.set("treshold", run_params["treshold"])

@@ -6,9 +6,11 @@
 import logging
 import sys
 
-from utils import download_db # pylint: disable=import-error
-from utils import global_config # pylint: disable=import-error
-from utils.global_config import GlobalConfig as CONFIG # pylint: disable=import-error
+sys.path.append('../')
+
+from analyse.utils import download_db
+from analyse.utils import global_config
+from analyse.utils.global_config import GlobalConfig as CONFIG
 
 PATH_TO_DATA = "data/"
 
