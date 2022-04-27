@@ -1,7 +1,7 @@
 {
     "databases" : [
         {
-            "name" : "mit-bih",
+            "name" : "MIT-BIH-AtrialFibrillation",
             "url" : "https://physionet.org/static/published-projects/afdb/mit-bih-atrial-fibrillation-database-1.0.0.zip"
         }
     ],

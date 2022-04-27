@@ -36,10 +36,11 @@ def get_db(url, filename, destination):
             os.rename(f"{destination}{new_files[0]}", f"{destination}{filename}")
 
         logging.info("Download finished!")
-        bin_dir = f"{destination}{filename}-binary"
+        bin_dir = f"{destination}{filename}-pickled"
         if bin_dir not in files:
             os.mkdir(bin_dir)
     except urllib.error.URLError:
+        logging.error(f"Downloading stopped. Trying again")
         ssl._create_default_https_context = ssl._create_unverified_context # pylint: disable=protected-access
         get_db(url, filename, destination)
 
@@ -49,15 +50,15 @@ def get_signals(path, reload=False):
     """
         Input:
             path - path to raw database with subdirectory RECORDS
-            reload - bool var: if True clears {path}-binary dir
+            reload - bool var: if True clears {path}-pickled dir
 
         Output:
             list of objects of class Signal
 
         Consequences:
-            fill {path}-binary dir with pickeled processed signals
+            fill {path}-pickled dir with pickeled processed signals
     """
-    bin_dir = f"{path}-binary"
+    bin_dir = f"{path}-pickled"
     processed_signals = os.listdir(bin_dir)
 
     if reload is True:

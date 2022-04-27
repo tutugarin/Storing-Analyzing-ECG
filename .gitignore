@@ -1,5 +1,5 @@
 .idea/
-analyse/data/mit-bih*
+analyse/data/*
 __pycache__
 *.DS_Store
 junk/*
