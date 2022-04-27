@@ -17,6 +17,8 @@ class Window:
         """
         self.name = name
 
+        self.has_defect : bool
+
         self.r_peaks = r_peak_indexes
 
         self.ratios = self.get_ratios()
@@ -66,3 +68,20 @@ class Window:
             alphabet.append('A')
 
         return np.array(alphabet)
+
+    def search_defects(self, ecg_statuses, prev=None) -> bool:
+        if prev is None:
+            prev = [0, 0]
+
+        total_statuses = ecg_statuses.shape[0]
+        while prev[0] + 1 < total_statuses and self.r_peaks[0] > ecg_statuses[prev[0] + 1][1]:
+            prev[0] += 1
+        while prev[1] + 1 < total_statuses and self.r_peaks[-1] > ecg_statuses[prev[1] + 1][1]:
+            prev[1] += 1
+        
+        for status, _ in ecg_statuses[prev[0]:prev[1] + 1]:
+            if status != 'N':
+                self.has_defect = True
+                return True
+        self.has_defect = False
+        return False

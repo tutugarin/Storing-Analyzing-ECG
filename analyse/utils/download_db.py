@@ -76,6 +76,8 @@ def get_signals(path, reload=False):
                 data, info = wfdb.rdsamp(f"{path}/{rec}")
                 data = np.array(data)
 
+                info['annotation'] = wfdb.rdann(f"{path}/{rec}", 'atr')
+
                 n_sig = info['n_sig']
                 if n_sig == 1:
                     data = np.array(data, ndmin=2).T

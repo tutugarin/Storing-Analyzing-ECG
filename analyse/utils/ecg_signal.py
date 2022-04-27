@@ -24,6 +24,12 @@ class Signal:
         self.sample_frequency = info['fs']
         self.window_size = CONFIG.get('window_size')
 
+        annotation = info['annotation'].__dict__
+        self.ecg_statuses = np.rec.fromarrays([
+            list(map(lambda s : ''.join(filter(str.isalpha, s)), annotation['aux_note'])), 
+            annotation['sample']
+        ])
+
         self.windows = self.split(data, self.window_size)
 
     def split(self, data, count):
@@ -33,10 +39,15 @@ class Signal:
         windows = []
         peak_indexes = self.get_r_peaks(data)
         total_amount = len(peak_indexes) - count
-        if total_amount > 0 :
-            for start in range(total_amount):
-                name = f"{self.name}_{start}"
-                windows.append(Window(name, peak_indexes[start:start + count]))
+        prev = [0, 0]
+        for start in range(total_amount):
+            if peak_indexes[start] <= self.ecg_statuses[0][1]:
+                continue
+
+            name = f"{self.name}_{start}"
+
+            windows.append(Window(name, peak_indexes[start:start + count]))
+            windows[-1].search_defects(self.ecg_statuses, prev)
 
         return np.array(windows)
 
