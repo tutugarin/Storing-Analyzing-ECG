@@ -12,6 +12,8 @@ class GlobalConfig:
         "databases" : {},
         "window_size" : 0,
         "treshold" : 0,
+        "est_params" : {},
+        "gram_size" : 0
     }
 
     def __init__(self, path_to_config):
@@ -29,6 +31,9 @@ class GlobalConfig:
 
         run_params = params_list["run params"]
         GlobalConfig.set("treshold", run_params["treshold"])
+        GlobalConfig.set("gram_size", run_params["gram_size"])
+
+        GlobalConfig.set("est_params", params_list["est params"])
 
     @staticmethod
     def get(name):

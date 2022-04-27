@@ -6,10 +6,25 @@
         }
     ],
     "signal params" : {
-        "window_size" : 16,
+        "window_size" : 32,
         "max_bpm" : 230
     },
     "run params" : {
-        "treshold" : 0.1
+        "treshold" : 0.1,
+        "gram_size": 3
+    },
+    "est params" : {
+        "n_estimators" : [
+            50, 100, 150
+        ],
+        "max_depth" : [
+            6, 8
+        ],
+        "eta" : [
+            0.05, 0.15, 0.3
+        ],
+        "verbosity" : [
+            0
+        ]
     }
 }

@@ -2,5 +2,5 @@
 analyse/data/*
 __pycache__
 *.DS_Store
-junk/*
+# junk/*
 *.log

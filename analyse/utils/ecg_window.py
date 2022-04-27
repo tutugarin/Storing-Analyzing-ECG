@@ -2,7 +2,9 @@
     ECG window class is defined here
 """
 
+from itertools import product
 import numpy as np
+import regex as re
 
 from analyse.utils.global_config import GlobalConfig as CONFIG
 
@@ -23,6 +25,7 @@ class Window:
 
         self.ratios = self.get_ratios()
         self.alphabet = self.code_ratios()
+        self.ngrams_cnt = self.normalize_ngrams()
 
         self.median = np.median(self.ratios)
         self.mean = np.mean(self.ratios)
@@ -67,7 +70,7 @@ class Window:
                 continue
             alphabet.append('A')
 
-        return np.array(alphabet)
+        return np.array(alphabet) # FIXME: return string
 
     def search_defects(self, ecg_statuses, prev=None) -> bool:
         if prev is None:
@@ -85,3 +88,31 @@ class Window:
                 return True
         self.has_defect = False
         return False
+    
+    def normalize_ngrams(self, word=None):
+        if word is None:
+            word = ''.join(self.alphabet)
+        possible_ngramms = list(
+            map(
+                lambda s : ''.join(s),
+                product('ABC', repeat=CONFIG.get("gram_size"))
+            )
+        )
+        dict_ = {s: 0 for s in possible_ngramms}
+        for ngramm in possible_ngramms:
+            dict_[ngramm] = len(re.findall(ngramm, word, overlapped=True))
+        return dict_
+
+    def get_data(self):
+        metrics = {
+            "median"    : self.median,
+            "mean"      : self.mean,
+            "variance"  : self.variance,
+            "mean_abs"  : self.mean_abs,
+            "max"       : self.max,
+            "min"       : self.min,
+            "sum"       : self.sum,
+        }
+        metrics.update(self.ngrams_cnt)
+
+        return metrics, self.has_defect
