@@ -22,7 +22,7 @@ class Signal:
 
         self.sig_len = info['sig_len']
         self.sample_frequency = info['fs']
-        self.window_size = CONFIG.config('window_size')
+        self.window_size = CONFIG.get('window_size')
 
         self.windows = self.split(data, self.window_size)
 
@@ -46,7 +46,7 @@ class Signal:
         """
         x_qrs = processing.XQRS(sig=data, fs=self.sample_frequency)
         x_qrs.detect(verbose=False)
-        max_bpm = CONFIG.config('max_bpm')
+        max_bpm = CONFIG.get('max_bpm')
         radius = int(self.sample_frequency * 60 / max_bpm)
         corrected_peak_indexes = processing.correct_peaks(
             data, peak_inds=x_qrs.qrs_inds,

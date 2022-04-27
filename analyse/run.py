@@ -9,7 +9,6 @@ import sys
 sys.path.append('../')
 
 from analyse.utils import download_db
-from analyse.utils import global_config
 from analyse.utils.global_config import GlobalConfig as CONFIG
 
 PATH_TO_DATA = "data/"
@@ -26,7 +25,7 @@ def main():
         reload = True
 
     signals = []
-    for database in CONFIG.config('databases'):
+    for database in CONFIG.get('databases'):
         path = download_db.get_db(
             url=database['url'],
             filename=database['name'],
@@ -47,5 +46,5 @@ if __name__ == "__main__":
         level=logging.DEBUG, 
         filemode='w'
     )
-    global_config.init_config(r'config/params.json')
+    CONFIG(r'config/params.json')
     main()

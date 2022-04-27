@@ -1,5 +1,3 @@
-# pylint: disable=too-many-instance-attributes
-
 """
     ECG window class is defined here
 """
@@ -56,7 +54,7 @@ class Window:
             B - if ratio > treshold
             C - if ratio < -1 * treshold
         """
-        treshold = CONFIG.config('treshold')
+        treshold = CONFIG.get('treshold')
         alphabet = []
         for ratio in self.ratios:
             if ratio > treshold:
