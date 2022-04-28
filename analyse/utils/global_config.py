@@ -14,9 +14,11 @@ class GlobalConfig:
         "databases" : {},
         "window_size" : 0,
         "treshold" : 0,
-        "est_params" : {},
         "ngram_size" : 0,
-        "possible_ngramms" : []
+        "possible_ngramms" : [],
+
+        "est_params" : {},
+        "rf_params" : {},
     }
 
     def __init__(self, path_to_config):
@@ -44,6 +46,7 @@ class GlobalConfig:
         GlobalConfig.set("possible_ngramms", possible_ngramms)
 
         GlobalConfig.set("est_params", params_list["est params"])
+        GlobalConfig.set("rf_params", params_list["randow forest params"])
 
     @staticmethod
     def get(name):

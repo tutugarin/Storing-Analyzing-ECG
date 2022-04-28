@@ -18,7 +18,7 @@
             50, 100, 150
         ],
         "max_depth" : [
-            6, 8
+            6, 8, 10
         ],
         "eta" : [
             0.05, 0.15, 0.3
@@ -26,5 +26,20 @@
         "verbosity" : [
             0
         ]
+    },
+    "randow forest params" : {
+        "n_estimators" : [
+            50, 100, 150
+        ],
+        "max_depth" : [
+            6, 8, 10
+        ],
+        "max_features" : [
+            "auto", "sqrt", "log2", null
+        ],
+        "bootstrap" : [
+            true, false
+        ]
+
     }
 }
