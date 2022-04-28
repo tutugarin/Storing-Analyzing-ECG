@@ -2,7 +2,9 @@
     Global Config variable is defined here
 """
 
+from itertools import product
 import json
+
 
 class GlobalConfig:
     """
@@ -13,7 +15,8 @@ class GlobalConfig:
         "window_size" : 0,
         "treshold" : 0,
         "est_params" : {},
-        "gram_size" : 0
+        "ngram_size" : 0,
+        "possible_ngramms" : []
     }
 
     def __init__(self, path_to_config):
@@ -31,7 +34,14 @@ class GlobalConfig:
 
         run_params = params_list["run params"]
         GlobalConfig.set("treshold", run_params["treshold"])
-        GlobalConfig.set("gram_size", run_params["gram_size"])
+        GlobalConfig.set("ngram_size", run_params["ngram_size"])
+        possible_ngramms = list(
+            map(
+                lambda s : ''.join(s),
+                product('ABC', repeat=GlobalConfig.get("ngram_size"))
+            )
+        )
+        GlobalConfig.set("possible_ngramms", possible_ngramms)
 
         GlobalConfig.set("est_params", params_list["est params"])
 

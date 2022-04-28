@@ -2,7 +2,6 @@
     ECG window class is defined here
 """
 
-from itertools import product
 import numpy as np
 import regex as re
 
@@ -18,22 +17,21 @@ class Window:
             Initialize object with interval (interval_size can differ)
         """
         self.name = name
-
-        self.has_defect : bool
-
         self.r_peaks = r_peak_indexes
 
-        self.ratios = self.get_ratios()
-        self.alphabet = self.code_ratios()
-        self.ngrams_cnt = self.normalize_ngrams()
+        self.has_defect : bool = None
 
-        self.median = np.median(self.ratios)
-        self.mean = np.mean(self.ratios)
-        self.variance = np.var(self.ratios)
-        self.mean_abs = np.mean(np.abs(self.ratios))
-        self.max = np.max(self.ratios)
-        self.min = np.min(self.ratios)
-        self.sum = np.sum(self.ratios)
+        ratios = self.get_ratios()
+
+        self.alphabet = self.code_ratios(ratios)
+
+        self.median = np.median(ratios)
+        self.mean = np.mean(ratios)
+        self.variance = np.var(ratios)
+        self.mean_abs = np.mean(np.abs(ratios))
+        self.max = np.max(ratios)
+        self.min = np.min(ratios)
+        self.sum = np.sum(ratios)
 
     def get_ratios(self):
         """
@@ -52,7 +50,7 @@ class Window:
         return np.array(ratios)
 
 
-    def code_ratios(self):
+    def code_ratios(self, ratios):
         """
             Make from ratios list of coded letters:
             A - if abs(ratio) <  treshold
@@ -61,7 +59,7 @@ class Window:
         """
         treshold = CONFIG.get('treshold')
         alphabet = []
-        for ratio in self.ratios:
+        for ratio in ratios:
             if ratio > treshold:
                 alphabet.append('B')
                 continue
@@ -70,9 +68,12 @@ class Window:
                 continue
             alphabet.append('A')
 
-        return np.array(alphabet) # FIXME: return string
+        return ''.join(alphabet)
 
     def search_defects(self, ecg_statuses, prev=None) -> bool:
+        """
+            Get Continuous Arrhythmia Sections and mark window, if it has defect
+        """
         if prev is None:
             prev = [0, 0]
 
@@ -89,21 +90,22 @@ class Window:
         self.has_defect = False
         return False
     
-    def normalize_ngrams(self, word=None):
+    def count_ngrams(self, word=None):
+        """
+            count all ngams in alphbet
+        """
         if word is None:
-            word = ''.join(self.alphabet)
-        possible_ngramms = list(
-            map(
-                lambda s : ''.join(s),
-                product('ABC', repeat=CONFIG.get("gram_size"))
-            )
-        )
+            word = self.alphabet
+        possible_ngramms = CONFIG.get("possible_ngramms")
         dict_ = {s: 0 for s in possible_ngramms}
         for ngramm in possible_ngramms:
             dict_[ngramm] = len(re.findall(ngramm, word, overlapped=True))
         return dict_
 
     def get_data(self):
+        """
+            make from window dict
+        """
         metrics = {
             "median"    : self.median,
             "mean"      : self.mean,
@@ -113,6 +115,6 @@ class Window:
             "min"       : self.min,
             "sum"       : self.sum,
         }
-        metrics.update(self.ngrams_cnt)
+        metrics.update(self.count_ngrams())
 
         return metrics, self.has_defect

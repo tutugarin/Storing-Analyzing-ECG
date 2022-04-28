@@ -11,7 +11,7 @@
     },
     "run params" : {
         "treshold" : 0.1,
-        "gram_size": 3
+        "ngram_size": 3
     },
     "est params" : {
         "n_estimators" : [
