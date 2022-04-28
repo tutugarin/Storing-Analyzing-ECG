@@ -35,7 +35,7 @@
             6, 8, 10
         ],
         "max_features" : [
-            "auto", "sqrt", "log2", null
+            "sqrt", "log2", null
         ],
         "bootstrap" : [
             true, false
