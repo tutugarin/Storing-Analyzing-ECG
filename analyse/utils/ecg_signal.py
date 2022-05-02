@@ -26,7 +26,7 @@ class Signal:
 
         annotation = info['annotation'].__dict__
         self.ecg_statuses = np.rec.fromarrays([
-            list(map(lambda s : ''.join(filter(str.isalpha, s)), annotation['aux_note'])), 
+            list(map(lambda s: ''.join(filter(str.isalpha, s)), annotation['aux_note'])),
             annotation['sample']
         ])
 

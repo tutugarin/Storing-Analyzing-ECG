@@ -41,7 +41,7 @@ def get_db(url, filename, destination):
             os.mkdir(bin_dir)
     except urllib.error.URLError:
         logging.error(f"Downloading stopped. Trying again")
-        ssl._create_default_https_context = ssl._create_unverified_context # pylint: disable=protected-access
+        ssl._create_default_https_context = ssl._create_unverified_context  # pylint: disable=protected-access
         get_db(url, filename, destination)
 
     return f"{destination}{filename}"
@@ -56,7 +56,7 @@ def get_signals(path, reload=False):
             list of objects of class Signal
 
         Consequences:
-            fill {path}-pickled dir with pickeled processed signals
+            fill {path}-pickled dir with pickled processed signals
     """
     bin_dir = f"{path}-pickled"
     processed_signals = os.listdir(bin_dir)

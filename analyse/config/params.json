@@ -3,6 +3,10 @@
         {
             "name" : "MIT-BIH-AtrialFibrillation",
             "url" : "https://physionet.org/static/published-projects/afdb/mit-bih-atrial-fibrillation-database-1.0.0.zip"
+        },
+        {
+            "name" : "MIT-BIH-Malignant-Ventricular-Ectopy",
+            "url" : "https://physionet.org/static/published-projects/vfdb/mit-bih-malignant-ventricular-ectopy-database-1.0.0.zip"
         }
     ],
     "signal params" : {
@@ -10,7 +14,7 @@
         "max_bpm" : 230
     },
     "run params" : {
-        "treshold" : 0.1,
+        "threshold" : 0.1,
         "ngram_size": 3
     },
     "est params" : {
@@ -27,7 +31,7 @@
             0
         ]
     },
-    "randow forest params" : {
+    "random forest params" : {
         "n_estimators" : [
             50, 100, 150
         ],

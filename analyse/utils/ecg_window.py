@@ -7,7 +7,6 @@ import regex as re
 
 from analyse.utils.global_config import GlobalConfig as CONFIG
 
-
 class Window:
     """
         Class for special interval of a processed signal
@@ -19,7 +18,7 @@ class Window:
         self.name = name
         self.r_peaks = r_peak_indexes
 
-        self.has_defect : bool = None
+        self.has_defect: bool = False
 
         ratios = self.get_ratios()
 
@@ -49,21 +48,20 @@ class Window:
             prev_len = cur_len
         return np.array(ratios)
 
-
     def code_ratios(self, ratios):
         """
             Make from ratios list of coded letters:
-            A - if abs(ratio) <  treshold
-            B - if ratio > treshold
-            C - if ratio < -1 * treshold
+            A - if abs(ratio) <  threshold
+            B - if ratio > threshold
+            C - if ratio < -1 * threshold
         """
-        treshold = CONFIG.get('treshold')
+        threshold = CONFIG.get('threshold')
         alphabet = []
         for ratio in ratios:
-            if ratio > treshold:
+            if ratio > threshold:
                 alphabet.append('B')
                 continue
-            if ratio < -treshold:
+            if ratio < -threshold:
                 alphabet.append('C')
                 continue
             alphabet.append('A')
@@ -72,7 +70,7 @@ class Window:
 
     def search_defects(self, ecg_statuses, prev=None) -> bool:
         """
-            Get Continuous Arrhythmia Sections and mark window, if it has defect
+            Get continuous sections and mark window, if it has defect
         """
         if prev is None:
             prev = [0, 0]
@@ -84,7 +82,7 @@ class Window:
             prev[1] += 1
         
         for status, _ in ecg_statuses[prev[0]:prev[1] + 1]:
-            if status != 'N':
+            if status != 'N' and status != 'NSR':
                 self.has_defect = True
                 return True
         self.has_defect = False
@@ -92,14 +90,14 @@ class Window:
     
     def count_ngrams(self, word=None):
         """
-            count all ngams in alphbet
+            count all ngrams in alphabet
         """
         if word is None:
             word = self.alphabet
-        possible_ngramms = CONFIG.get("possible_ngramms")
-        dict_ = {s: 0 for s in possible_ngramms}
-        for ngramm in possible_ngramms:
-            dict_[ngramm] = len(re.findall(ngramm, word, overlapped=True))
+        possible_ngrams = CONFIG.get("possible_ngrams")
+        dict_ = {s: 0 for s in possible_ngrams}
+        for ngram in possible_ngrams:
+            dict_[ngram] = len(re.findall(ngram, word, overlapped=True))
         return dict_
 
     def get_data(self):
@@ -107,13 +105,13 @@ class Window:
             make from window dict
         """
         metrics = {
-            "median"    : self.median,
-            "mean"      : self.mean,
-            "variance"  : self.variance,
-            "mean_abs"  : self.mean_abs,
-            "max"       : self.max,
-            "min"       : self.min,
-            "sum"       : self.sum,
+            "median": self.median,
+            "mean": self.mean,
+            "variance": self.variance,
+            "mean_abs": self.mean_abs,
+            "max": self.max,
+            "min": self.min,
+            "sum": self.sum,
         }
         metrics.update(self.count_ngrams())
 

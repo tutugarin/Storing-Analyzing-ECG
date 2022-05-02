@@ -11,19 +11,19 @@ class GlobalConfig:
         Contains global variable
     """
     __conf = {
-        "databases" : {},
-        "window_size" : 0,
-        "treshold" : 0,
-        "ngram_size" : 0,
-        "possible_ngramms" : [],
+        "databases": {},
+        "window_size": 0,
+        "threshold": 0,
+        "ngram_size": 0,
+        "possible_ngrams": [],
 
-        "est_params" : {},
-        "rf_params" : {},
+        "est_params": {},
+        "rf_params": {},
     }
 
     def __init__(self, path_to_config):
         """
-            read params.json and set constats
+            read params.json and set constants
         """
         with open(path_to_config, encoding='UTF-8') as file:
             params_list = json.load(file)
@@ -35,18 +35,18 @@ class GlobalConfig:
         GlobalConfig.set("max_bpm", sig_params["max_bpm"])
 
         run_params = params_list["run params"]
-        GlobalConfig.set("treshold", run_params["treshold"])
+        GlobalConfig.set("threshold", run_params["threshold"])
         GlobalConfig.set("ngram_size", run_params["ngram_size"])
-        possible_ngramms = list(
+        possible_ngrams = list(
             map(
-                lambda s : ''.join(s),
+                lambda s: ''.join(s),
                 product('ABC', repeat=GlobalConfig.get("ngram_size"))
             )
         )
-        GlobalConfig.set("possible_ngramms", possible_ngramms)
+        GlobalConfig.set("possible_ngrams", possible_ngrams)
 
         GlobalConfig.set("est_params", params_list["est params"])
-        GlobalConfig.set("rf_params", params_list["randow forest params"])
+        GlobalConfig.set("rf_params", params_list["random forest params"])
 
     @staticmethod
     def get(name):
