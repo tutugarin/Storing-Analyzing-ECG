@@ -51,13 +51,13 @@ class GlobalConfig:
     @staticmethod
     def get(name):
         """
-            get contant named 'name'
+            get constant named 'name'
         """
         return GlobalConfig.__conf[name]
 
     @staticmethod
     def set(name, value):
         """
-            set contant named 'name' with value
+            set constant named 'name' with value
         """
         GlobalConfig.__conf[name] = value
