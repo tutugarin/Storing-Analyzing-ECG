@@ -5,7 +5,7 @@
 import numpy as np
 import regex as re
 
-from analyse.utils.global_config import GlobalConfig as CONFIG
+from utils.global_config import CONFIG
 
 class Window:
     """

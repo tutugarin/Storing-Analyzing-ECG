@@ -5,8 +5,8 @@
 import numpy as np
 from wfdb import processing
 
-from analyse.utils.ecg_window import Window
-from analyse.utils.global_config import GlobalConfig as CONFIG
+from utils.ecg_window import Window
+from utils.global_config import CONFIG
 
 
 class Signal:

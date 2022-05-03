@@ -13,7 +13,7 @@ import pickle
 import zipfile
 import wfdb
 
-from analyse.utils.ecg_signal import Signal
+from utils.ecg_signal import Signal
 
 
 def get_db(url, filename, destination):

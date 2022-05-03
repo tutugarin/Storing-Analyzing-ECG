@@ -4,12 +4,14 @@
 
 from itertools import product
 import json
+from pathlib import Path
 
 
 class GlobalConfig:
     """
         Contains global variable
     """
+    __inited : bool = False
     __conf = {
         "databases": {},
         "window_size": 0,
@@ -25,6 +27,10 @@ class GlobalConfig:
         """
             read params.json and set constants
         """
+        if self.__inited:
+            return
+        self.__inited = True
+
         with open(path_to_config, encoding='UTF-8') as file:
             params_list = json.load(file)
 
@@ -61,3 +67,8 @@ class GlobalConfig:
             set constant named 'name' with value
         """
         GlobalConfig.__conf[name] = value
+
+
+script_location = Path(__file__).absolute().parent
+file_location = script_location / '../config/params.json'
+CONFIG = GlobalConfig(file_location)
