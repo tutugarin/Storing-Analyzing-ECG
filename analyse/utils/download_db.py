@@ -86,7 +86,7 @@ def get_signals(path, reload=False):
                     continue
 
                 for sig in range(n_sig):
-                    sig_name = f"{rec}_{info['sig_name'][sig]}"
+                    sig_name = f"{rec}_ECG{sig + 1}"
                     filename = f"{bin_dir}/{sig_name}.pickle"
                     if f"{sig_name}.pickle" in processed_signals:
                         with open(filename, 'rb') as bin_file:
