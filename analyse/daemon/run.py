@@ -8,10 +8,7 @@ import sys
 
 sys.path.append('../')
 
-from utils import download_db
-from utils.global_config import CONFIG
-
-PATH_TO_DATA = "../data/"
+from utils import download_db as ddb
 
 
 def main():
@@ -24,15 +21,7 @@ def main():
     if len(sys.argv) > 1 and sys.argv[1] == '1':
         reload = True
 
-    signals = []
-    for database in CONFIG.get('databases'):
-        path = download_db.get_db(
-            url=database['url'],
-            filename=database['name'],
-            destination=PATH_TO_DATA
-        )
-        new_signals = download_db.get_signals(path, reload)
-        signals.extend(new_signals)
+    signals = ddb.get_all_signals()
 
 
 if __name__ == "__main__":

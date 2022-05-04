@@ -9,11 +9,17 @@ import ssl
 import os
 import logging
 import numpy as np
+from pathlib import Path
 import pickle
 import zipfile
 import wfdb
 
 from utils.ecg_signal import Signal
+from utils.global_config import CONFIG
+
+
+script_location = str(Path(__file__).absolute().parent)
+PATH_TO_DATA = script_location + "/../data/"
 
 
 def get_db(url, filename, destination):
@@ -106,4 +112,17 @@ def get_signals(path, reload=False):
             except ValueError:
                 logging.warning(f"Record {rec} can't be read")
 
+    return np.array(signals)
+
+
+def get_all_signals(reload=False):
+    signals = []
+    for database in CONFIG.get('databases'):
+        path = get_db(
+            url=database['url'],
+            filename=database['name'],
+            destination=PATH_TO_DATA
+        )
+        new_signals = get_signals(path, reload)
+        signals.extend(new_signals)
     return np.array(signals)
