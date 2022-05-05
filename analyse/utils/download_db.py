@@ -13,6 +13,8 @@ from pathlib import Path
 import pickle
 import zipfile
 import wfdb
+from sklearn.model_selection import train_test_split
+import pandas as pd
 
 from utils.ecg_signal import Signal
 from utils.global_config import CONFIG
@@ -116,6 +118,12 @@ def get_signals(path, reload=False):
 
 
 def get_all_signals(reload=False):
+    """
+        Input:
+            reload - bool var: if True clears pickled dir
+        Output:
+            list of objects of class Signal from all databases
+    """
     signals = []
     for database in CONFIG.get('databases'):
         path = get_db(
@@ -126,3 +134,34 @@ def get_all_signals(reload=False):
         new_signals = get_signals(path, reload)
         signals.extend(new_signals)
     return np.array(signals)
+
+def split_preprocess_signals(signals, test_size=0.25, seed=42):
+    """
+        Input:
+            signals - list: splits it into test (with size test_size) and train lists
+            test_size - float: from 0 to 1, size of test list
+            seed - integer: seed for random splitting reproduction
+        Output:
+            four DataFrames, two for training and two for testing
+            X_train, y_train, X_test, y_test
+    """
+    signals_train, signals_test = train_test_split(signals, test_size=test_size, random_state=seed)
+
+    train_windows = []
+    train_classification = []
+    for sig in signals_train:
+        for window in sig.windows:
+            metrics, has_defect = window.get_data()
+            train_windows.append(metrics)
+            train_classification.append(has_defect)
+
+    test_windows = []
+    test_classification = []
+    for sig in signals_test:
+        for window in sig.windows:
+            metrics, has_defect = window.get_data()
+            test_windows.append(metrics)
+            test_classification.append(has_defect)
+
+    return pd.DataFrame(train_windows), pd.DataFrame(train_classification),\
+           pd.DataFrame(test_windows), pd.DataFrame(test_classification)
