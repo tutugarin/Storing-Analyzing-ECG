@@ -111,8 +111,8 @@ def get_signals(path, reload=False):
                                 protocol=pickle.HIGHEST_PROTOCOL
                             )
 
-            except ValueError:
-                logging.warning(f"Record {rec} can't be read")
+            except ValueError as e:
+                logging.warning(f"Record {rec} can't be read: {e}")
 
     return np.array(signals)
 
