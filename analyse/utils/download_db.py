@@ -177,7 +177,7 @@ def split_dbs(dbs, seed=42, reload=False):
     X_tests = []
     y_tests = []
     for db in dbs:
-        db_path = get_db(db.url, db.name, "/content/Storing-Analyzing-ECG/analyse/data/")
+        db_path = get_db(db.url, db.name, PATH_TO_DATA)
         signals = get_signals(db_path, reload=reload)
         X_train_db, y_train_db, X_test_db, y_test_db = split_preprocess_signals(signals, db.test_size, seed)
         X_trains.append(X_train_db)
