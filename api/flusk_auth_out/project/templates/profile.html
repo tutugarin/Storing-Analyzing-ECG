@@ -1,7 +1,22 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="title">
-  Welcome, {{ name }}!
-</h1>
+    <h1 class="title">
+        <style>
+            .button-wrapper {
+                display: flex;
+                justify-content: center;
+            }
+        </style>
+        <form action="/test">
+            <div class="button-wrapper">
+                <button class="button is-block center is-info is-large">Get Json</button>
+            </div>
+        </form>
+        <form action="/revoke">
+            <div class="button-wrapper">
+                <button class="button is-block center is-info is-large">Logged out from Goggle</button>
+            </div>
+        </form>
+    </h1>
 {% endblock %}
