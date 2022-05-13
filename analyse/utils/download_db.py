@@ -164,25 +164,28 @@ def split_preprocess_signals(signals, test_size=0.25, seed=42):
     return train_windows, train_classification,\
            test_windows, test_classification
 
-def split_dbs(dbs, seed=42, reload=False):
+def split_dbs(test_size, seed=42, reload=False):
     """
         Input:
-            dbs - list of structures with .url, .name, .test_size fields
+            test_size, seed, reload
         Output:
             four DataFrames, two for training and two for testing
             X_train, y_train, X_test, y_test
     """
-    X_trains = []
-    y_trains = []
-    X_tests = []
-    y_tests = []
-    for db in dbs:
-        db_path = get_db(db.url, db.name, PATH_TO_DATA)
+    X_trains = pd.DataFrame()
+    y_trains = pd.DataFrame()
+    X_tests = pd.DataFrame()
+    y_tests = pd.DataFrame()
+    for database in CONFIG.get('databases'):
+        db_path = get_db(database['url'], database['name'], PATH_TO_DATA)
         signals = get_signals(db_path, reload=reload)
-        X_train_db, y_train_db, X_test_db, y_test_db = split_preprocess_signals(signals, db.test_size, seed)
-        X_trains.append(X_train_db)
-        y_trains.append(y_train_db)
-        X_tests.append(X_test_db)
-        y_tests.append(y_test_db)
-    return pd.concat(X_trains, axis=0), pd.concat(y_trains, axis=0), \
-           pd.concat(X_tests, axis=0), pd.concat(y_tests, axis=0)
+
+        X_train_db, y_train_db, X_test_db, y_test_db = split_preprocess_signals(signals, test_size, seed)
+
+        X_trains = pd.concat([X_trains, X_train_db], ignore_index=True)
+        y_trains = pd.concat([y_trains, y_train_db], ignore_index=True)
+        X_tests = pd.concat([X_tests, X_test_db], ignore_index=True)
+        y_tests = pd.concat([y_tests, y_test_db], ignore_index=True)
+
+    return X_trains, y_trains, \
+           X_tests, y_tests
