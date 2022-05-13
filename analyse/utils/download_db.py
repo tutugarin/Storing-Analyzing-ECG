@@ -151,15 +151,15 @@ def split_preprocess_signals(signals, test_size=0.25, seed=42):
     train_classification = pd.DataFrame()
     for signal in signals_train:
         metrics, classifications = signal.get_data()
-        train_windows = pd.concat([train_windows, metrics])
-        train_classification = pd.concat([train_classification, classifications])
+        train_windows = pd.concat([train_windows, metrics], ignore_index=True)
+        train_classification = pd.concat([train_classification, classifications], ignore_index=True)
 
     test_windows = pd.DataFrame()
     test_classification = pd.DataFrame()
     for signal in signals_test:
         metrics, classifications = signal.get_data()
-        test_windows = pd.concat([test_windows, metrics])
-        test_classification = pd.concat([test_classification, classifications])
+        test_windows = pd.concat([test_windows, metrics], ignore_index=True)
+        test_classification = pd.concat([test_classification, classifications], ignore_index=True)
 
     return train_windows, train_classification,\
            test_windows, test_classification
