@@ -1,3 +1,3 @@
 """
-    Get new raw ECG signal
+    Process raw ECG signal
 """

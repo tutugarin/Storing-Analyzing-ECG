@@ -11,7 +11,6 @@ class GlobalConfig:
     """
         Contains global variable
     """
-    __inited : bool = False
     __conf = {
         "databases": {},
         "window_size": 0,
@@ -27,9 +26,6 @@ class GlobalConfig:
         """
             read params.json and set constants
         """
-        if self.__inited:
-            return
-        self.__inited = True
 
         with open(path_to_config, encoding='UTF-8') as file:
             params_list = json.load(file)

@@ -3,6 +3,7 @@
 """
 
 import numpy as np
+import pandas as pd
 from wfdb import processing
 
 from utils.ecg_window import Window
@@ -63,3 +64,16 @@ class Signal:
             data, peak_inds=x_qrs.qrs_inds,
             search_radius=radius, smooth_window_size=self.window_size)
         return np.array(corrected_peak_indexes)
+
+    def get_data(self):
+        """
+            returns pandas DataFrame with all windows
+                and pandas DataFrame with their classification
+        """
+        windows = []
+        classifications = []
+        for window in self.windows:
+            metrics, has_defect = window.get_data()
+            windows.append(metrics)
+            classifications.append(has_defect)
+        return pd.DataFrame(windows), pd.DataFrame(classifications)

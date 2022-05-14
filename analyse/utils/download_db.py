@@ -147,21 +147,45 @@ def split_preprocess_signals(signals, test_size=0.25, seed=42):
     """
     signals_train, signals_test = train_test_split(signals, test_size=test_size, random_state=seed)
 
-    train_windows = []
-    train_classification = []
-    for sig in signals_train:
-        for window in sig.windows:
-            metrics, has_defect = window.get_data()
-            train_windows.append(metrics)
-            train_classification.append(has_defect)
+    train_windows = pd.DataFrame()
+    train_classification = pd.DataFrame()
+    for signal in signals_train:
+        metrics, classifications = signal.get_data()
+        train_windows = pd.concat([train_windows, metrics], ignore_index=True)
+        train_classification = pd.concat([train_classification, classifications], ignore_index=True)
 
-    test_windows = []
-    test_classification = []
-    for sig in signals_test:
-        for window in sig.windows:
-            metrics, has_defect = window.get_data()
-            test_windows.append(metrics)
-            test_classification.append(has_defect)
+    test_windows = pd.DataFrame()
+    test_classification = pd.DataFrame()
+    for signal in signals_test:
+        metrics, classifications = signal.get_data()
+        test_windows = pd.concat([test_windows, metrics], ignore_index=True)
+        test_classification = pd.concat([test_classification, classifications], ignore_index=True)
 
-    return pd.DataFrame(train_windows), pd.DataFrame(train_classification),\
-           pd.DataFrame(test_windows), pd.DataFrame(test_classification)
+    return train_windows, train_classification,\
+           test_windows, test_classification
+
+def split_dbs(test_size, seed=42, reload=False):
+    """
+        Input:
+            test_size, seed, reload
+        Output:
+            four DataFrames, two for training and two for testing
+            X_train, y_train, X_test, y_test
+    """
+    X_trains = pd.DataFrame()
+    y_trains = pd.DataFrame()
+    X_tests = pd.DataFrame()
+    y_tests = pd.DataFrame()
+    for database in CONFIG.get('databases'):
+        db_path = get_db(database['url'], database['name'], PATH_TO_DATA)
+        signals = get_signals(db_path, reload=reload)
+
+        X_train_db, y_train_db, X_test_db, y_test_db = split_preprocess_signals(signals, test_size, seed)
+
+        X_trains = pd.concat([X_trains, X_train_db], ignore_index=True)
+        y_trains = pd.concat([y_trains, y_train_db], ignore_index=True)
+        X_tests = pd.concat([X_tests, X_test_db], ignore_index=True)
+        y_tests = pd.concat([y_tests, y_test_db], ignore_index=True)
+
+    return X_trains, y_trains, \
+           X_tests, y_tests

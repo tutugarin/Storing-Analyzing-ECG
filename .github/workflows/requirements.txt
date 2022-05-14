@@ -2,4 +2,3 @@ wfdb
 pyyaml
 regex
 scikit-learn
-xgboosts
