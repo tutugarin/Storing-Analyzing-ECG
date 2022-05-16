@@ -8,15 +8,24 @@
                 justify-content: center;
             }
         </style>
-        <form action="/test">
+        {% if not flag %}
+            <form action="/oauth2callback">
+            <div class="button-wrapper">
+                <button class="button is-block center is-info is-large">Google Login</button>
+            </div>
+        </form>
+        {% endif %}
+        {% if flag %}
+            <form action="/test">
             <div class="button-wrapper">
                 <button class="button is-block center is-info is-large">Get Json</button>
             </div>
-        </form>
-        <form action="/revoke">
+            </form>
+            <form action="/revoke">
             <div class="button-wrapper">
                 <button class="button is-block center is-info is-large">Logged out from Goggle</button>
             </div>
-        </form>
+            </form>
+        {% endif %}
     </h1>
 {% endblock %}

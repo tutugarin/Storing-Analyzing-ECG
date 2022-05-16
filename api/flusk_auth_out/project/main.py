@@ -4,8 +4,10 @@ import os
 import flask
 import requests
 
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, make_response
 from flask_login import login_required, current_user
+from flask_restful import Resource, Api
+from flask_restful import reqparse
 
 from . import db
 import time
@@ -15,10 +17,14 @@ import google.oauth2.credentials
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
 
-CLIENT_SECRETS_FILE = "/home/andrcontrol/PycharmProjects/flusk_auth_out/project/client_secret.json"
-SCOPES = ['https://www.googleapis.com/auth/fitness.heart_rate.read']
+CLIENT_SECRETS_FILE = "client_secret.json"
+SCOPE = 'https://www.googleapis.com/auth/fitness.heart_rate.read'
 API_SERVICE_NAME = 'fitness'
 API_VERSION = 'v1'
+
+CLIENT_ID = '433488219494-pskhdk5jvej4f11kt8a6svtqb5qnts05.apps.googleusercontent.com'
+CLIENT_SECRET = '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'
+REDIRECT_URI = 'http://127.0.0.1:5000/oauth2callback'
 
 DATA_SOURCE = 'raw:com.google.heart_rate.bpm:com.google.android.apps.fitness:user_input'
 NOW = datetime.today()
@@ -28,88 +34,73 @@ DATA_SET = "%s-%s" % (START, END)
 
 main = Blueprint('main', __name__)
 
+flag = False
+
 
 @main.route('/')
 def index():
     return render_template('index.html')
 
 
-@main.route('/profile')
-@login_required
-def profile():
-    return render_template('profile.html', name=current_user.name)
+class Profile(Resource):
+    def get(self):
+        return make_response(render_template('profile.html', name=current_user.name, flag=flag), 200)
 
 
-@main.route('/test')
-def test_api_request():
-    if 'credentials' not in flask.session:
-        return flask.redirect('authorize')
-    credentials = google.oauth2.credentials.Credentials(
-        **flask.session['credentials'])
-
-    oauth2_client = googleapiclient.discovery.build(
-        'fitness', 'v1',
-        credentials=credentials)
-
-    return oauth2_client.users().dataSources().datasets().get(
-        userId='me', dataSourceId=DATA_SOURCE, datasetId=DATA_SET).execute()
-
-
-@main.route('/authorize')
-def authorize():
-    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-        CLIENT_SECRETS_FILE, scopes=SCOPES)
-
-    flow.redirect_uri = "http://localhost:5000/oauth2callback"
-
-    authorization_url, state = flow.authorization_url(
-        access_type='offline',
-        include_granted_scopes='true')
-
-    flask.session['state'] = state
-    flask.session.permanent = True
-    return flask.redirect(authorization_url)
+class GetProgramResult(Resource):
+    def get(self):
+        if 'credentials' not in flask.session:
+            return flask.redirect(flask.url_for('main.oauth2callback'))
+        credentials = json.loads(flask.session['credentials'])
+        if credentials['expires_in'] <= 0:
+            return flask.redirect(flask.url_for('main.oauth2callback'))
+        else:
+            headers = {'Authorization': 'Bearer {}'.format(credentials['access_token'])}
+            req_uri = 'https://www.googleapis.com/fitness/v1/users/me/dataSources/raw:com.google.heart_rate.bpm:com.google.android.apps.fitness:user_input/datasets/' + str(
+                DATA_SET)
+            r = requests.get(req_uri, headers=headers)
+            return r.json()
 
 
-@main.route('/oauth2callback')
-def oauth2callback():
-    state = flask.request.args.get('state', default=None, type=None)
-    flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
-        CLIENT_SECRETS_FILE, scopes=SCOPES, state=state)
-    flow.redirect_uri = "http://localhost:5000/oauth2callback"
-    authorization_response = flask.request.url
-    flow.fetch_token(authorization_response=authorization_response)
-
-    credentials = flow.credentials
-    flask.session['credentials'] = credentials_to_dict(credentials)
-
-    return flask.redirect(flask.url_for('main.test_api_request'))
-
-@main.route('/revoke')
-def revoke():
-  if 'credentials' not in flask.session:
-    return ('You need to <a href="/authorize">authorize</a> before ' +
-            'testing the code to revoke credentials.')
-
-  credentials = google.oauth2.credentials.Credentials(
-    **flask.session['credentials'])
-
-  revoke = requests.post('https://oauth2.googleapis.com/revoke',
-      params={'token': credentials.token},
-      headers = {'content-type': 'application/x-www-form-urlencoded'})
-
-  status_code = getattr(revoke, 'status_code')
-  if status_code == 200:
-    return('Credentials successfully revoked.')
-  else:
-    return('An error occurred.')
+class StartProgram(Resource):
+    def get(self):
+        if 'code' not in flask.request.args:
+            auth_uri = ('https://accounts.google.com/o/oauth2/v2/auth?response_type=code'
+                        '&client_id={}&redirect_uri={}&scope={}').format(CLIENT_ID, REDIRECT_URI, SCOPE)
+            return flask.redirect(auth_uri)
+        else:
+            auth_code = flask.request.args.get('code')
+            data = {'code': auth_code,
+                    'client_id': CLIENT_ID,
+                    'client_secret': CLIENT_SECRET,
+                    'redirect_uri': REDIRECT_URI,
+                    'grant_type': 'authorization_code'}
+            r = requests.post('https://oauth2.googleapis.com/token', data=data)
+            flask.session['credentials'] = r.text
+            global flag
+            flag = True
+            return flask.redirect(flask.url_for('main.profile'))
 
 
-@main.route('/clear')
-def clear_credentials():
-    if 'credentials' in flask.session:
+class Revoke(Resource):
+    def get(self):
+        if 'credentials' not in flask.session:
+            return make_response('You need to <a href="/oauth2callback">authorize</a> before ' +
+                                 'testing the code to revoke credentials.', 200)
+
+        credentials = json.loads(flask.session['credentials'])
+
+        revoke = requests.post('https://oauth2.googleapis.com/revoke',
+                               params={'token': credentials['access_token']},
+                               headers={'content-type': 'application/x-www-form-urlencoded'})
+
+        status_code = getattr(revoke, 'status_code')
         del flask.session['credentials']
-    return ('Credentials have been cleared.<br><br>')
+        flag_false()
+        if status_code == 200:
+            return flask.redirect(flask.url_for('main.profile'))
+        else:
+            return 'An error occurred.'
 
 
 def credentials_to_dict(credentials):
@@ -119,3 +110,15 @@ def credentials_to_dict(credentials):
             'client_id': credentials.client_id,
             'client_secret': credentials.client_secret,
             'scopes': credentials.scopes}
+
+
+def add_main_method(api):
+    api.add_resource(Profile, '/profile', endpoint="main.profile")
+    api.add_resource(GetProgramResult, '/test', endpoint="main.test")
+    api.add_resource(StartProgram, '/oauth2callback', endpoint="main.oauth2callback")
+    api.add_resource(Revoke, '/revoke', endpoint="main.revoke")
+
+
+def flag_false():
+    global flag
+    flag = False
