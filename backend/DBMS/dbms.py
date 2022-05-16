@@ -1,4 +1,5 @@
 import psycopg2
+import json
 
 
 class DataBaseManagemantSystem:
@@ -37,9 +38,7 @@ class DataBaseManagemantSystem:
         rows = self.cur.fetchall()
         needed_rows = list()
         for row in rows:
-            needed_rows.append({"id": row[0], "pulse": row[1], "status": row[2] + 1, "info": row[3]})
-            self.update_record(needed_rows[-1])
-        self.con.commit()
+            needed_rows.append({"id": row[0], "pulse": row[1], "status": row[2], "info": row[3]})
         return needed_rows
 
     def get_record_by_id(self, id):
@@ -62,7 +61,7 @@ class DataBaseManagemantSystem:
         self.cur.execute("update users set is_online=%s where email=%s", [new_flag, email])
         self.con.commit()
 
-    def update_status(self, new_status, email):
+    def update_status_by_email(self, new_status, email):
         self.cur.execute("select (last_id) from users where email=%s", [email])
         id = self.cur.fetchone()[0]
         self.cur.execute("update pulse_signals set status=%s where id=%s", [new_status, id])
@@ -79,8 +78,7 @@ class DataBaseManagemantSystem:
             needed_row["info"] = more_info["info"]
         return needed_row
 
-#    def insert_json_into_postgres(self):
-
-
-prom = DataBaseManagemantSystem()
-print(prom.update_status(4, 'email'))
+    def insert_json_into_postgres(self, email, file):
+        record_list = json.load(file)
+        pulse = record_list["points"][-1]["fpVal"]
+        self.add_record(pulse)
