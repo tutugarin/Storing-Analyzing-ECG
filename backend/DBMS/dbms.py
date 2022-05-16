@@ -1,4 +1,5 @@
 import psycopg2
+import json
 
 
 class DataBaseManagemantSystem:
@@ -79,8 +80,8 @@ class DataBaseManagemantSystem:
             needed_row["info"] = more_info["info"]
         return needed_row
 
-#    def insert_json_into_postgres(self):
-
-
-prom = DataBaseManagemantSystem()
-print(prom.update_status(4, 'email'))
+    def insert_json_into_postgres(self, email, file):
+        record_list = json.load(file)
+        pulse = record_list["points"][-1]["fpVal"]
+        id = self.add_record(pulse)
+        self.cur.execute("update users set last_id=%s where email=%s", [id, email])
