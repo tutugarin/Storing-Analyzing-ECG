@@ -58,7 +58,7 @@ class DataBaseManagemantSystem:
         self.con.commit()
 
     def update_flag(self, new_flag, email):
-        self.cur.execute("update users set is_online=%s where email=%s", [new_flag, email])
+        self.cur.execute("update users set is_login=%s where email=%s", [new_flag, email])
         self.con.commit()
 
     def update_status_by_email(self, new_status, email):
@@ -82,3 +82,5 @@ class DataBaseManagemantSystem:
         record_list = json.load(file)
         pulse = record_list["points"][-1]["fpVal"]
         self.add_record(pulse)
+        self.cur.execute("update users set last_id=%s where email=%s", [id, email])
+        self.con.commit()
