@@ -58,7 +58,7 @@ class DataBaseManagemantSystem:
         self.con.commit()
 
     def update_flag(self, new_flag, email):
-        self.cur.execute("update users set is_online=%s where email=%s", [new_flag, email])
+        self.cur.execute("update users set is_login=%s where email=%s", [new_flag, email])
         self.con.commit()
 
     def update_status_by_email(self, new_status, email):
