@@ -15,18 +15,16 @@
     <div class="hero-head">
         <nav class="navbar">
             <div class="container">
-
-
                 <div class="navbar-end">
                     <a href="{{ url_for('main.index') }}" class="navbar-item">
                         Home
                     </a>
-                    {% if current_user.is_authenticated %}
+                    {% if auth %}
                         <a href="{{ url_for('main.profile') }}" class="navbar-item">
                             Profile
                         </a>
                     {% endif %}
-                    {% if not current_user.is_authenticated %}
+                    {% if not auth %}
                         <a href="{{ url_for('auth.login') }}" class="navbar-item">
                             Login
                         </a>
@@ -34,7 +32,7 @@
                             Sign Up
                         </a>
                     {% endif %}
-                    {% if current_user.is_authenticated %}
+                    {% if auth %}
                         <a href="{{ url_for('auth.logout') }}" class="navbar-item">
                             Logout
                         </a>

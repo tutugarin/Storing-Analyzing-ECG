@@ -1,21 +1,19 @@
 import flask
 from flask import Blueprint, render_template, redirect, url_for, request, flash, make_response
 from werkzeug.security import generate_password_hash, check_password_hash
-from flask_login import login_user, logout_user, login_required
-from flask_restful import Resource, Api
-from flask_restful import reqparse
-from .models import User
-from . import db
-from .main import flag_false
+from flask_restful import Resource
+from . import dbms
 
 auth = Blueprint('auth', __name__)
 
 
 class Logout(Resource):
     def get(self):
-        logout_user()
+        prom = dbms.DataBaseManagemantSystem()
+        email = flask.session.get('email', False)
+        if email:
+            prom.update_flag(0, email)
         flask.session.clear()
-        flag_false()
         return redirect(url_for('main.index'))
 
 
@@ -24,25 +22,22 @@ class Signup(Resource):
         email = request.form.get('email')
         name = request.form.get('name')
         password = request.form.get('password')
-
-        user = User.query.filter_by(
-            email=email).first()  # if this returns a user, then the email already exists in database
-
-        if user:  # if a user is found, we want to redirect back to signup page so user can try again
+        prom = dbms.DataBaseManagemantSystem()
+        check = prom.check_user(email)
+        if check:
             flash('Email address already exists')
             return redirect(url_for('auth.signup'))
-
-        # create a new user with the form data. Hash the password so the plaintext version isn't saved.
-        new_user = User(email=email, name=name, password=generate_password_hash(password, method='sha256'))
-
-        # add the new user to the database
-        db.session.add(new_user)
-        db.session.commit()
-
+        prom.add_user(name, generate_password_hash(password, method='sha256'), email)
         return redirect(url_for('auth.login'))
 
     def get(self):
-        return make_response(render_template('signup.html'), 200)
+        prom = dbms.DataBaseManagemantSystem()
+        email = flask.session.get('email', False)
+        if not email:
+            auth = 0
+        else:
+            auth = prom.get_info_by_email(email)['is_login']
+        return make_response(render_template('signup.html', auth=auth), 200)
 
 
 class Login(Resource):
@@ -50,21 +45,26 @@ class Login(Resource):
         email = request.form.get('email')
         password = request.form.get('password')
         remember = True if request.form.get('remember') else False
-
-        user = User.query.filter_by(email=email).first()
-
-        # check if the user actually exists
-        # take the user-supplied password, hash it, and compare it to the hashed password in the database
-        if not user or not check_password_hash(user.password, password):
+        prom = dbms.DataBaseManagemantSystem()
+        check = prom.check_user(email)
+        if check:
+            info = prom.get_info_by_email(email)
+        if not check or not check_password_hash(info['password'], password):
             flash('Please check your login details and try again.')
             return redirect(url_for('auth.login'))  # if the user doesn't exist or password is wrong, reload the page
 
-        # if the above check passes, then we know the user has the right credentials
-        login_user(user, remember=remember)
+        flask.session['email'] = email
+        prom.update_flag(1, email)
         return redirect(url_for('main.profile'))
 
     def get(self):
-        return make_response(render_template('login.html'), 200)
+        prom = dbms.DataBaseManagemantSystem()
+        email = flask.session.get('email', False)
+        if not email:
+            auth = 0
+        else:
+            auth = prom.get_info_by_email(email)['is_login']
+        return make_response(render_template('login.html', auth=auth), 200)
 
 
 def add_auth_method(api):

@@ -1,10 +1,17 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="title">
-  Flask Login Example
-</h1>
+    {% if auth %}
+        <h1 class="title">
+            Hello, {{ name }}
+        </h1>
+    {% endif %}
+    {% if not auth %}
+        <h1 class="title">
+            {{ name }}
+        </h1>
+    {% endif %}
 <h2 class="subtitle">
-  Easy authentication and authorization in Flask.
+  If you login you can start analyze your data!
 </h2>
 {% endblock %}
