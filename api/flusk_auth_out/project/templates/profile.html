@@ -8,19 +8,59 @@
                 justify-content: center;
             }
         </style>
-        {% if not flag %}
+        {% if info %}
+                <div class="notification is-danger center">
+                    {{ info }}
+                </div>
+        {% endif %}
+        {% if not auth == 2 %}
             <form action="/oauth2callback">
             <div class="button-wrapper">
                 <button class="button is-block center is-info is-large">Google Login</button>
             </div>
-        </form>
-        {% endif %}
-        {% if flag %}
-            <form action="/test">
-            <div class="button-wrapper">
-                <button class="button is-block center is-info is-large">Get Json</button>
-            </div>
             </form>
+        {% endif %}
+        {% if auth == 2 %}
+            {% if status == 0 %}
+                <form action="/test">
+                <div class="button-wrapper">
+                    <button class="button is-block center is-info is-large">Start analyze</button>
+                </div>
+                </form>
+            {% endif %}
+            {% if status == 1 %}
+                <form action="/stop">
+                <div class="button-wrapper">
+                    <button class="button is-block center is-info is-large">Stop analyze</button>
+                </div>
+                </form>
+            {% endif %}
+            <form action="/check">
+                <div class="button-wrapper">
+                    {% if status == 0 %}
+                        <input class="button is-block center is-info is-large" name=kuku type=submit value="Get status" onClick="alert('Данные отправлены!')">
+                    {% endif %}
+
+                    {% if status == 1 %}
+                        <input class="button is-block center is-info is-large" name=kuku type=submit value="Get status" onClick="alert('Идет обработка.')">
+                    {% endif %}
+
+                    {% if status == 2 %}
+                        <input class="button is-block center is-info is-large" name=kuku type=submit value="Get status" onClick="alert('Результат получен!')">
+                    {% endif %}
+
+                    {% if status == 3 %}
+                        <input class="button is-block center is-info is-large" name=kuku type=submit value="Get status" onClick="alert('Программа не запущена!')">
+                    {% endif %}
+                </div>
+            </form>
+            {% if status == 2 %}
+                <form action="/result">
+                <div class="button-wrapper">
+                    <button class="button is-block center is-info is-large">Get result</button>
+                </div>
+                </form>
+            {% endif %}
             <form action="/revoke">
             <div class="button-wrapper">
                 <button class="button is-block center is-info is-large">Logged out from Goggle</button>
