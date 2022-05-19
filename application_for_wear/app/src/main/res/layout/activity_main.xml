@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    tools:context=".MainActivity"
+    tools:deviceIds="wear">
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/status_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        android:visibility="gone"
+        tools:text="Status: AVAILABLE"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/last_measured_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/last_measured"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        android:visibility="gone"
+        android:layout_below="@+id/status_text"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/last_measured_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        android:textSize="40sp"
+        android:visibility="gone"
+        android:layout_below="@+id/last_measured_label"
+        tools:text="60.0"
+        tools:visibility="visible" />
+
+    <Button
+        android:id="@+id/btn_get_json"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/material_on_background_disabled"
+        android:layout_below="@id/last_measured_value"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:text="@string/get_json"
+        android:visibility="gone"
+        tools:visibility="visible"
+        android:onClick="getjson"/>
+    <!-- when heart rate is not available -->
+    <TextView
+        android:id="@+id/not_available"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="@string/heart_rate_not_available"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:visivlity="visible"/>
+</RelativeLayout>
