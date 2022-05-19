@@ -31,7 +31,7 @@ class Index(Resource):
         else:
             auth = prom.get_info_by_email(email)['is_login']
             name = prom.get_info_by_email(email)['name']
-        return render_template('index.html', auth=auth, name=name)
+        return make_response(render_template('index.html', auth=auth, name=name),200)
 
 
 class Profile(Resource):
