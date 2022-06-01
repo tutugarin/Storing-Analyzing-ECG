@@ -49,6 +49,7 @@ class GlobalConfig:
 
         GlobalConfig.set("est_params", params_list["est params"])
         GlobalConfig.set("rf_params", params_list["random forest params"])
+        GlobalConfig.set("nn_params", params_list["neural network"])
 
     @staticmethod
     def get(name):
