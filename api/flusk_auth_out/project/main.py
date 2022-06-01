@@ -21,18 +21,17 @@ DATA_SET = "%s-%s" % (START, END)
 
 main = Blueprint('main', __name__)
 
-
-@main.route('/')
-def index():
-    prom = dbms.DataBaseManagemantSystem()
-    email = flask.session.get('email', False)
-    if not email:
-        auth = 0
-        name = 'Please login first'
-    else:
-        auth = prom.get_info_by_email(email)['is_login']
-        name = prom.get_info_by_email(email)['name']
-    return render_template('index.html', auth=auth, name=name)
+class Index(Resource):
+    def get(self):
+        prom = dbms.DataBaseManagemantSystem()
+        email = flask.session.get('email', False)
+        if not email:
+            auth = 0
+            name = 'Please login first'
+        else:
+            auth = prom.get_info_by_email(email)['is_login']
+            name = prom.get_info_by_email(email)['name']
+        return make_response(render_template('index.html', auth=auth, name=name),200)
 
 
 class Profile(Resource):
@@ -64,7 +63,6 @@ class StartProgram(Resource):
             email = flask.session.get('email', False)
             if email:
                 prom.insert_json_into_postgres(email, r.json())
-                print(r.json())
                 auth = prom.get_info_by_email(email)['is_login']
                 status = prom.get_info_by_email(email).get('status', 0)
             else:
@@ -172,6 +170,7 @@ def credentials_to_dict(credentials):
 
 
 def add_main_method(api):
+    api.add_resource(Index, '/', endpoint="main.index")
     api.add_resource(Profile, '/profile', endpoint="main.profile")
     api.add_resource(StartProgram, '/test', endpoint="main.test")
     api.add_resource(GoogleLogin, '/oauth2callback', endpoint="main.oauth2callback")
@@ -179,3 +178,4 @@ def add_main_method(api):
     api.add_resource(CheckStatus, '/check', endpoint="main.check")
     api.add_resource(StopProgram, '/stop', endpoint="main.stop")
     api.add_resource(GetResult, '/result', endpoint="main.result")
+
