@@ -5,3 +5,4 @@ __pycache__
 # junk/*
 *.log
 .ipynb_checkpoints
+.vscode/
